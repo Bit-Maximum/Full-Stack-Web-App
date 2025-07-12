@@ -1,4 +1,4 @@
-import cities from "../table";
+import { useState, useEffect } from 'react';
 import { DataGrid,
     GridRowsProp,
     GridColDef,
@@ -11,15 +11,40 @@ import { ruRU } from '@mui/x-data-grid/locales';
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 
-function CitiesGrid() {
 
-    const rows: GridRowsProp = cities;
+interface City {
+    id: number;
+    name: string;
+    zipcode: string;
+}
+
+interface ApiResponse {
+    cities: City[];
+}
+
+function CitiesGrid() {
+    const [rows, setRows] = useState<GridRowsProp>([]);
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 0.5},
         { field: 'name', headerName: 'Город', flex: 1},
         { field: 'zipcode', headerName: 'Почтовый код', flex: 1}
     ];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/v1/cities'); // Замените на ваш URL
+                const data: ApiResponse = await response.json();
+                setRows(data.cities);
+            } catch (err) {
+                console.error("Ошибка при загрузке данных:", err);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
     function CustomToolbar() {
         return (
@@ -40,7 +65,7 @@ function CitiesGrid() {
                 columns={columns}
 
                 slots={{
-                    toolbar: CustomToolbar,
+                    toolbar: CustomToolbar
                 }}
                 slotProps={{
                     pagination: {

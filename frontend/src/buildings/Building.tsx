@@ -6,6 +6,7 @@ import React from "react";
 
 function List() {
     const { id } = useParams();
+
     if (!id) {
         return (
             <Container maxWidth="lg" sx={{mt: '20px'}}>

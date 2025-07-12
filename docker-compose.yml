@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: bitmaximum/nse-task-3:latest
+    ports:
+      - "3000:3000"
+    container_name: nse-t4-frontend
+    depends_on:
+      backend:
+        condition: service_started
+    restart: on-failure
+
+  backend:
+    image: bitmaximum/nse-task-2:latest
+    container_name: nse-t4-backend
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: on-failure
